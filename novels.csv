@@ -1,26 +1,51 @@
-,id,genres,rating,rating_votes
-0,1173,"['Adventure', 'Fantasy', 'Sci-fi']",2.9,25
-1,1175,"['Action', 'Sci-fi', 'Shounen']",2.8,12
-2,1177,"['Action', 'Adventure', 'Fantasy', 'Sci-fi', 'Shounen']",2.7,15
-3,13038,"['Action', 'Adventure', 'Fantasy', 'Mystery', 'Psychological', 'School Life', 'Shounen', 'Supernatural']",3.0,3
-4,1171,"['Drama', 'Mystery', 'Psychological', 'Romance', 'School Life', 'Shounen']",3.7,30
-5,2042,"['Action', 'Comedy', 'Drama', 'School Life', 'Shounen', 'Slice of Life']",2.4,10
-6,6612,"['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'School Life', 'Shounen']",3.6,550
-7,11133,"['Comedy', 'Romance', 'School Life', 'Shounen Ai', 'Slice of Life']",4.6,147
-8,9343,"['Adult', 'Adventure', 'Comedy', 'Fantasy', 'Gender Bender', 'Harem', 'Josei', 'Mature', 'Smut']",4.0,141
-9,8233,"['Action', 'Comedy', 'Fantasy', 'Sci-fi']",4.5,133
-10,7959,"['Adult', 'Comedy', 'Josei', 'Mature', 'Romance', 'Smut', 'Tragedy']",3.1,117
-11,2696,"['Action', 'Adventure', 'Comedy', 'Fantasy', 'Seinen', 'Slice of Life']",4.1,238
-12,13155,"['Comedy', 'Romance', 'Smut']",4.2,126
-13,2742,"['Adventure', 'Fantasy', 'Harem']",3.7,136
-14,7145,"['Comedy', 'Ecchi', 'Harem', 'Romance', 'School Life']",2.8,8
-15,5400,"['Action', 'Adventure', 'Ecchi', 'Fantasy', 'Harem', 'Supernatural', 'Xuanhuan']",4.2,192
-16,9314,"['Drama', 'Slice of Life', 'Supernatural']",4.2,39
-17,10927,"['Romance', 'School Life', 'Shoujo', 'Slice of Life']",3.2,35
-18,1179,"['Comedy', 'Romance', 'Shoujo']",2.7,12
-19,12408,"['Drama', 'Romance', 'Shounen Ai', 'Yaoi']",3.7,103
-20,13080,"['Comedy', 'Josei', 'Romance', 'Smut']",4.2,66
-21,1069,"['Action', 'Adventure', 'Fantasy', 'Harem']",3.9,89
-22,13197,"['Comedy', 'Drama', 'Romance', 'Shoujo', 'Slice of Life']",4.0,43
-23,12584,"['Adventure', 'Ecchi', 'Fantasy', 'Harem']",3.7,22
-24,1181,['Romance'],3.1,10
+id,genres,rating,rating_votes
+1173,"['Adventure', 'Fantasy', 'Sci-fi']",2.9,27
+14845,['Action'],3.3,3
+1175,"['Action', 'Sci-fi', 'Shounen']",2.8,12
+1177,"['Action', 'Adventure', 'Fantasy', 'Sci-fi', 'Shounen']",2.7,15
+13038,"['Action', 'Adventure', 'Fantasy', 'Mystery', 'Psychological', 'School Life', 'Shounen', 'Supernatural']",3.0,3
+1171,"['Drama', 'Mystery', 'Psychological', 'Romance', 'School Life', 'Shounen']",3.8,33
+2042,"['Action', 'Comedy', 'Drama', 'School Life', 'Shounen', 'Slice of Life']",2.4,10
+6612,"['Action', 'Adventure', 'Comedy', 'Drama', 'Fantasy', 'School Life', 'Shounen']",3.6,564
+11133,"['Comedy', 'Romance', 'School Life', 'Shounen Ai', 'Slice of Life']",4.6,157
+9343,"['Adult', 'Adventure', 'Comedy', 'Fantasy', 'Gender Bender', 'Harem', 'Josei', 'Mature', 'Smut']",3.9,147
+8233,"['Action', 'Adventure', 'Comedy', 'Fantasy', 'Sci-fi']",4.5,136
+7959,"['Adult', 'Comedy', 'Josei', 'Mature', 'Romance', 'Smut', 'Tragedy']",3.1,118
+2696,"['Action', 'Adventure', 'Comedy', 'Fantasy', 'Seinen', 'Slice of Life']",4.1,241
+13155,"['Comedy', 'Drama', 'Josei', 'Psychological', 'Romance']",4.1,163
+2742,"['Adventure', 'Fantasy', 'Harem']",3.7,137
+7145,"['Comedy', 'Ecchi', 'Harem', 'Romance', 'School Life']",2.8,8
+5400,"['Action', 'Adventure', 'Ecchi', 'Fantasy', 'Harem', 'Xuanhuan']",4.1,211
+9314,"['Drama', 'Slice of Life', 'Supernatural']",4.2,40
+10927,"['Romance', 'School Life', 'Shoujo', 'Slice of Life']",3.3,38
+14629,"['Comedy', 'Drama', 'Romance', 'Slice of Life']",3.8,19
+1179,"['Comedy', 'Romance', 'Shoujo']",2.7,12
+12408,"['Drama', 'Romance', 'Shounen Ai', 'Yaoi']",3.8,115
+13080,"['Comedy', 'Josei', 'Romance', 'Smut']",4.0,104
+14794,"['Horror', 'Mature', 'Yaoi']",4.3,7
+1069,"['Action', 'Adventure', 'Fantasy', 'Harem']",3.9,90
+13197,"['Comedy', 'Drama', 'Josei', 'Romance', 'Slice of Life']",4.0,59
+12584,"['Action', 'Adventure', 'Drama', 'Ecchi', 'Fantasy', 'Harem', 'Psychological', 'Romance', 'Seinen', 'Slice of Life']",3.6,29
+1181,['Romance'],3.3,11
+1183,"['Drama', 'Romance', 'Yaoi']",2.3,19
+3992,"['Action', 'Adventure', 'Comedy']",4.3,93
+1185,['Slice of Life'],3.0,8
+8674,"['Adventure', 'Fantasy', 'Sci-fi']",4.1,84
+10925,"['Adventure', 'Comedy', 'Fantasy', 'Romance', 'Shounen', 'Slice of Life']",4.5,56
+9469,"['Comedy', 'Historical', 'Romance', 'Shounen Ai']",3.3,38
+3244,"['Action', 'Wuxia']",3.9,37
+13580,"['Action', 'Drama', 'Mecha', 'Sci-fi', 'Seinen', 'Supernatural', 'Tragedy']",4.1,37
+780,"['Action', 'Adult', 'Drama', 'Fantasy', 'Harem', 'Martial Arts', 'Mature', 'Tragedy', 'Xianxia']",2.5,315
+7221,['Romance'],3.8,19
+9838,"['Action', 'Fantasy', 'Romance', 'Supernatural']",4.0,28
+1187,"['Action', 'Mystery', 'Sci-fi', 'Shounen']",2.1,9
+2310,"['Drama', 'Josei', 'Romance']",4.0,24
+829,"['Action', 'Adventure', 'Comedy', 'Fantasy', 'Shounen', 'Slice of Life']",4.1,292
+10914,"['Adventure', 'Fantasy', 'Martial Arts', 'Romance', 'Shotacon', 'Slice of Life', 'Yaoi']",4.3,67
+1189,"['Historical', 'Yaoi']",3.0,35
+8423,"['Slice of Life', 'Tragedy']",2.4,30
+3567,"['Action', 'Martial Arts', 'Tragedy', 'Wuxia']",3.0,18
+14718,"['Action', 'Comedy', 'Harem', 'Tragedy', 'Xuanhuan']",3.5,15
+12735,"['Action', 'Adventure', 'Fantasy', 'Harem']",2.8,57
+12859,"['Action', 'Fantasy', 'Slice of Life']",3.0,107
+11499,"['Mature', 'Psychological', 'Seinen', 'Shoujo Ai', 'Tragedy', 'Yuri']",3.2,9
