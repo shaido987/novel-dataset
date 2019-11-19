@@ -1,1 +1,1 @@
-Creates a dataset from novelupdates containing information about translated novels. The dataset contains novels from eight different original languages. 
+Creates a dataset from novelupdates (https://www.novelsupdates.com) containing information about translated novels. The dataset contains transalted English novels from eight different original languages.
