@@ -7,7 +7,17 @@ from utils import get_value, get_bool, get_value_str_txt, is_empty
 
 class NovelScraper(object):
     """
-    Scrapes novel information from novelupdates, i.e. http://www.novelupdates.com/.
+    Scrapes novel information from novelupdates, http://www.novelupdates.com/.
+    
+    Constant web links:
+    * NOVEL_LIST_URL: http://www.novelupdates.com/novelslisting/?st=1&pg=
+      The url of the series listings. A number is added to the end dependingo n the tab wanted.
+    * NOVEL_SINGLE_URL: http://www.novelupdates.com/?p=
+      The url of a single novel, a id number needs to be added to the end for the specific novel.
+    
+    :param debug: Boolean, debug mode. If true, only one page with novels will be parsed (25).
+    :param delay: The delay between web requests, used both when obtaining novel ids and for each individual novel.
+                  Affects the speed of the program.
     """
 
     def __init__(self, debug=False, delay=0.5):
@@ -19,7 +29,6 @@ class NovelScraper(object):
     def parse_all_novels(self):
         """
         Parses and scrapes information from all novel pages.
-        :param delay: Delay between web requests.
         :returns: A list of dictionaries with all scraped and cleaned information of the novels.
         """
         novel_ids = self.get_all_novel_ids(delay=delay)
