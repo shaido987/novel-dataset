@@ -10,12 +10,13 @@ class NovelScraper(object):
     Scrapes novel information from novelupdates, i.e. http://www.novelupdates.com/.
     """
 
-    def __init__(self, debug=False):
+    def __init__(self, debug=False, delay=0.5):
         self.debug = debug
+        self.delay = delay
         self.NOVEL_LIST_URL = "http://www.novelupdates.com/novelslisting/?st=1&pg="
         self.NOVEL_SINGLE_URL = "http://www.novelupdates.com/?p="
 
-    def parse_all_novels(self, delay=0.5):
+    def parse_all_novels(self):
         """
         Parses and scrapes information from all novel pages.
         :param delay: Delay between web requests.
@@ -27,7 +28,7 @@ class NovelScraper(object):
         for novel_id in novel_ids:
             novel_info = self.parse_single_novel(novel_id)
             all_novel_information.append(novel_info)
-            sleep(delay)
+            sleep(self.delay)
         return all_novel_information
 
     def parse_single_novel(self, novel_id):
@@ -56,7 +57,7 @@ class NovelScraper(object):
 
         return data
 
-    def get_all_novel_ids(self, delay=0.5):
+    def get_all_novel_ids(self):
         """
         There is no easy way to get all novel ids (they are not strictly consecutive).
         Gets all novel ids from the novels listing page. The page contains multiple tabs with novels, first
@@ -79,7 +80,7 @@ class NovelScraper(object):
             page = requests.get(self.NOVEL_LIST_URL + str(i))
             novel_ids = self.get_novel_ids(page)
             all_novel_ids.extend(novel_ids)
-            sleep(delay)
+            sleep(self.delay)
         return all_novel_ids
 
     def get_novel_list_num_pages(self, page):
