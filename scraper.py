@@ -257,9 +257,9 @@ class NovelScraper(object):
         rel_info['recommendation_list_ids'] = []
         for series in wpb_wrapper.findChildren('a', attrs={'class': 'genre'}, recursive=False):
             if series.has_attr('title'):
-                rel_info['recommended_series_ids'].append(series.get('id')[3:])
+                rel_info['recommended_series_ids'].append(int(series.get('id')[3:]))
             else:
-                rel_info['related_series_ids'].append(series.get('id')[3:])
+                rel_info['related_series_ids'].append(int(series.get('id')[3:]))
 
         rec_lists = wpb_wrapper.find('ol', attrs={'class': 'ulc_sp'})
         if rec_lists:

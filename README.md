@@ -36,5 +36,5 @@ Dataset columns:
   * Recommended Series IDs
   * Recommendation List IDs
   
-  Current Version: 0.1  
-  Updated on 2020-05-10
+  Current Version: 0.1.1 
+  Updated on 2020-05-17
