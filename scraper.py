@@ -31,7 +31,7 @@ class NovelScraper(object):
         Parses and scrapes information from all novel pages.
         :returns: A list of dictionaries with all scraped and cleaned information of the novels.
         """
-        novel_ids = self.get_all_novel_ids(delay=delay)
+        novel_ids = self.get_all_novel_ids(delay=self.delay)
 
         all_novel_information = []
         for novel_id in novel_ids:
