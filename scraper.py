@@ -1,5 +1,5 @@
 import re
-import requests
+import cfscrape
 from time import sleep
 from bs4 import BeautifulSoup
 from utils import get_value, get_bool, get_value_str_txt, is_empty
@@ -25,7 +25,8 @@ class NovelScraper(object):
         self.delay = delay
         self.NOVEL_LIST_URL = "http://www.novelupdates.com/novelslisting/?st=1&pg="
         self.NOVEL_SINGLE_URL = "http://www.novelupdates.com/?p="
-
+        self.scraper = scraper = cfscrape.create_scraper()
+        
     def parse_all_novels(self):
         """
         Parses and scrapes information from all novel pages.
@@ -47,8 +48,8 @@ class NovelScraper(object):
         :param novel_id: The id number of the novel.
         :returns: A dictinary with all scraped and cleaned information about the novel.
         """
-
-        page = requests.get(self.NOVEL_SINGLE_URL + str(novel_id))
+    
+        page = self.scraper.get(self.NOVEL_SINGLE_URL + str(novel_id))
         soup = BeautifulSoup(page.content, 'html5lib')
         content = soup.find('div', attrs={'class': 'w-blog-content'})
         if content is None:
@@ -74,19 +75,18 @@ class NovelScraper(object):
 
         :param delay: Delay between web requests.
         :returns: A list with the novel ids of all currently listed novels.
-        """
-
+        """   
         if self.debug:
             novels_num_pages = 1
             print("Debug run, running with: " + str(novels_num_pages))
         else:
-            page = requests.get(self.NOVEL_LIST_URL + '1')
+            page = self.scraper.get(self.NOVEL_LIST_URL + '1')
             novels_num_pages = self.get_novel_list_num_pages(page)
             print("Full run, pages with novels: " + str(novels_num_pages))
 
         all_novel_ids = []
         for i in range(1, novels_num_pages + 1):
-            page = requests.get(self.NOVEL_LIST_URL + str(i))
+            page = self.scraper.get(self.NOVEL_LIST_URL + str(i))
             novel_ids = self.get_novel_ids(page)
             all_novel_ids.extend(novel_ids)
             sleep(self.delay)
@@ -101,7 +101,7 @@ class NovelScraper(object):
         :param page: The web address to the novel list, presumably the first page but can be any.
         :returns: An int representing the current number of pages of the novel lists.
         """
-        soup = BeautifulSoup(page.text, 'html.parser')
+        soup = BeautifulSoup(page.text, 'html5lib')
         dig_pag = soup.find('div', attrs={'class': 'digg_pagination'})
         max_page = max([int(a.text) for a in dig_pag.find_all('a') if a.text.isdigit()])
         return max_page
