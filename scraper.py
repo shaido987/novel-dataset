@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from time import sleep
 from bs4 import BeautifulSoup
-from utils import get_value, str2bool, get_value_str_txt, is_empty
+from utils import get_value, str2bool, get_value_str_txt, is_empty, progressbar
 
 
 class NovelScraper:
@@ -38,7 +38,7 @@ class NovelScraper:
         novel_ids = self.get_all_novel_ids()
 
         all_novel_information = []
-        for novel_id in novel_ids:
+        for novel_id in progressbar(novel_ids, prefix="Parsing novels: ", suffix="current novel id: "):
             info = self.parse_single_novel(novel_id)
             all_novel_information.append(info)
             sleep(self.delay)
@@ -57,8 +57,6 @@ class NovelScraper:
         content = soup.find('div', attrs={'class': 'w-blog-content'})
         if content is None:
             return dict()
-
-        print('Processing novel:', novel_id)
 
         data = {'id': novel_id}
         data.update(self.general_info(content))
@@ -80,15 +78,16 @@ class NovelScraper:
         """
         if self.debug:
             novels_num_pages = 1
-            print('Debug run, running with:',  novels_num_pages, 'pages.')
+            print('Debug run, using 1 page with novels.')
         else:
             page = self.scraper.get(self.NOVEL_LIST_URL + '1')
             novels_num_pages = self.get_novel_list_num_pages(page)
-            print('Full run, pages with novels:', novels_num_pages, 'pages.')
+            print('Full run, pages with novels:', novels_num_pages)
 
         all_novel_ids = []
-        for i in range(1, novels_num_pages + 1):
-            page = self.scraper.get(self.NOVEL_LIST_URL + str(i))
+        page_nums = progressbar(range(1, novels_num_pages + 1), prefix="Obtaining novel ids: ", suffix="current page: ")
+        for page_num in page_nums:
+            page = self.scraper.get(self.NOVEL_LIST_URL + str(page_num))
             novel_ids = self.get_novel_ids(page)
             all_novel_ids.extend(novel_ids)
             sleep(self.delay)
@@ -104,7 +103,7 @@ class NovelScraper:
         :param page: The web address to the novel list, presumably the first page but can be any.
         :returns: An int representing the current number of pages of the novel lists.
         """
-        soup = BeautifulSoup(page.text, 'html5lib')
+        soup = BeautifulSoup(page.text, 'html.parser')
         dig_pag = soup.find('div', attrs={'class': 'digg_pagination'})
         max_page = max([int(a.text) for a in dig_pag.find_all('a') if a.text.isdigit()])
         return max_page
