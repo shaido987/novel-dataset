@@ -102,7 +102,7 @@ class NovelScraper:
         :param page: The web address to the novel list, presumably the first page but can be any.
         :returns: An int representing the current number of pages of the novel lists.
         """
-        soup = BeautifulSoup(page.text, 'html5lib')
+        soup = BeautifulSoup(page.text, 'html.parser')
         dig_pag = soup.find('div', attrs={'class': 'digg_pagination'})
         max_page = max([int(a.text) for a in dig_pag.find_all('a') if a.text.isdigit()])
         return max_page
