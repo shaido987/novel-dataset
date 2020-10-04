@@ -71,18 +71,19 @@ def str2bool(argument):
         return None
 
 
-def progressbar(it, prefix="", size=60):
+def progressbar(it, size=60, prefix="", suffix=""):
     """
     Adds an progress bar when scraping.
     :param it: iterable, the list or iterable to run over.
-    :param prefix: str, any prefix to use.
     :param size: int, the total length of the bar.
+    :param prefix: str, any prefix to use.
+    :param suffix: str, any suffix to use.
     """
     count = len(it)
 
-    def show(j, novel_id):
+    def show(j, item):
         x = int(size*j/count)
-        sys.stdout.write("\r%s[%s%s] %i/%i (current novel id: %s)" % (prefix, "#"*x, "."*(size-x), j, count, novel_id))
+        sys.stdout.write("\r%s[%s%s] %i/%i (%s%s)" % (prefix, "#"*x, "."*(size-x), j, count, suffix, item))
         sys.stdout.flush()
 
     sys.stdout.write("\r%s[%s] 0/%i" % (prefix, "."*size, count))

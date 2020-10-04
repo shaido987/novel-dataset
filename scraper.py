@@ -38,7 +38,7 @@ class NovelScraper:
         novel_ids = self.get_all_novel_ids()
 
         all_novel_information = []
-        for novel_id in progressbar(novel_ids, "Running: "):
+        for novel_id in progressbar(novel_ids, prefix="Parsing novels: ", suffix="current novel id: "):
             info = self.parse_single_novel(novel_id)
             all_novel_information.append(info)
             sleep(self.delay)
@@ -82,11 +82,12 @@ class NovelScraper:
         else:
             page = self.scraper.get(self.NOVEL_LIST_URL + '1')
             novels_num_pages = self.get_novel_list_num_pages(page)
-            print('Full run, pages with novels:', novels_num_pages, '.')
+            print('Full run, pages with novels:', novels_num_pages)
 
         all_novel_ids = []
-        for i in range(1, novels_num_pages + 1):
-            page = self.scraper.get(self.NOVEL_LIST_URL + str(i))
+        page_nums = progressbar(range(1, novels_num_pages + 1), prefix="Obtaining novel ids: ", suffix="current page: ")
+        for page_num in page_nums:
+            page = self.scraper.get(self.NOVEL_LIST_URL + str(page_num))
             novel_ids = self.get_novel_ids(page)
             all_novel_ids.extend(novel_ids)
             sleep(self.delay)
