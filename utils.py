@@ -1,3 +1,6 @@
+import sys
+
+
 def get_value(element, check=lambda e: e.string, parse=lambda e: e.string.strip()):
     """
     Gets the value of a HTML element/node following the parse function. 
@@ -66,3 +69,25 @@ def str2bool(argument):
         return False
     else:
         return None
+
+
+def progressbar(it, prefix="", size=60):
+    """
+    Adds an progress bar when scraping.
+    :param it: iterable, the list or iterable to run over.
+    :param prefix: str, any prefix to use.
+    :param size: int, the total length of the bar.
+    """
+    count = len(it)
+
+    def show(j, novel_id):
+        x = int(size*j/count)
+        sys.stdout.write("\r%s[%s%s] %i/%i (current novel id: %s)" % (prefix, "#"*x, "."*(size-x), j, count, novel_id))
+        sys.stdout.flush()
+
+    sys.stdout.write("\r%s[%s] 0/%i" % (prefix, "."*size, count))
+    for i, item in enumerate(it):
+        yield item
+        show(i+1, item)
+    sys.stdout.write("\n")
+    sys.stdout.flush()

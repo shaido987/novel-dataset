@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from time import sleep
 from bs4 import BeautifulSoup
-from utils import get_value, str2bool, get_value_str_txt, is_empty
+from utils import get_value, str2bool, get_value_str_txt, is_empty, progressbar
 
 
 class NovelScraper:
@@ -38,7 +38,7 @@ class NovelScraper:
         novel_ids = self.get_all_novel_ids()
 
         all_novel_information = []
-        for novel_id in novel_ids:
+        for novel_id in progressbar(novel_ids, "Running: "):
             info = self.parse_single_novel(novel_id)
             all_novel_information.append(info)
             sleep(self.delay)
@@ -57,8 +57,6 @@ class NovelScraper:
         content = soup.find('div', attrs={'class': 'w-blog-content'})
         if content is None:
             return dict()
-
-        print('Processing novel:', novel_id)
 
         data = {'id': novel_id}
         data.update(self.general_info(content))
@@ -80,11 +78,11 @@ class NovelScraper:
         """
         if self.debug:
             novels_num_pages = 1
-            print('Debug run, running with:',  novels_num_pages, 'pages.')
+            print('Debug run, using 1 page with novels.')
         else:
             page = self.scraper.get(self.NOVEL_LIST_URL + '1')
             novels_num_pages = self.get_novel_list_num_pages(page)
-            print('Full run, pages with novels:', novels_num_pages, 'pages.')
+            print('Full run, pages with novels:', novels_num_pages, '.')
 
         all_novel_ids = []
         for i in range(1, novels_num_pages + 1):
