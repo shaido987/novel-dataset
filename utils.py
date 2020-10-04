@@ -50,20 +50,19 @@ def is_empty(element):
     return get_value(element) == ""
 
 
-def get_bool(string):
+def str2bool(argument):
     """
-    Convenience function to convert a string to a boolean.
-    Handles Yes, yes, No and no.
-    
-    :param string: String to convert to boolean.
-    :retruns: The boolean representation of the string or None.
+    Helper function to process input arguments of boolean type.
+
+    :param argument: str
+    :return: boolean
     """
-    if string is None:
+    if argument is None:
         return None
-    
-    if string.lower() == "yes":
+
+    if argument.lower() in ('yes', 'true', 't', 'y', '1'):
         return True
-    elif string.lower() == "no":
+    elif argument.lower() in ('no', 'false', 'f', 'n', '0'):
         return False
     else:
         return None

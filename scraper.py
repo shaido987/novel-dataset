@@ -1,17 +1,20 @@
 import re
 import cfscrape
+import argparse
+import pandas as pd
+import numpy as np
 from time import sleep
 from bs4 import BeautifulSoup
-from utils import get_value, get_bool, get_value_str_txt, is_empty
+from utils import get_value, str2bool, get_value_str_txt, is_empty
 
 
-class NovelScraper(object):
+class NovelScraper:
     """
     Scrapes novel information from novelupdates, http://www.novelupdates.com/.
     
     Constant web links:
     * NOVEL_LIST_URL: http://www.novelupdates.com/novelslisting/?st=1&pg=
-      The url of the series listings. A number is added to the end dependingo n the tab wanted.
+      The url of the series listings. A number is added to the end depending on the wanted tab.
     * NOVEL_SINGLE_URL: http://www.novelupdates.com/?p=
       The url of a single novel, a id number needs to be added to the end for the specific novel.
     
@@ -20,13 +23,13 @@ class NovelScraper(object):
                   Affects the speed of the program.
     """
 
-    def __init__(self, debug=False, delay=0.5):
-        self.debug = debug
+    def __init__(self, delay=0.5, debug=False):
         self.delay = delay
+        self.debug = debug
         self.NOVEL_LIST_URL = "http://www.novelupdates.com/novelslisting/?st=1&pg="
         self.NOVEL_SINGLE_URL = "http://www.novelupdates.com/?p="
-        self.scraper = scraper = cfscrape.create_scraper()
-        
+        self.scraper = cfscrape.create_scraper()
+
     def parse_all_novels(self):
         """
         Parses and scrapes information from all novel pages.
@@ -36,8 +39,8 @@ class NovelScraper(object):
 
         all_novel_information = []
         for novel_id in novel_ids:
-            novel_info = self.parse_single_novel(novel_id)
-            all_novel_information.append(novel_info)
+            info = self.parse_single_novel(novel_id)
+            all_novel_information.append(info)
             sleep(self.delay)
         return all_novel_information
 
@@ -46,16 +49,16 @@ class NovelScraper(object):
         Parses and scrapes information from a single novel page.
 
         :param novel_id: The id number of the novel.
-        :returns: A dictinary with all scraped and cleaned information about the novel.
+        :returns: A dictionary with all scraped and cleaned information about the novel.
         """
-    
+
         page = self.scraper.get(self.NOVEL_SINGLE_URL + str(novel_id))
-        soup = BeautifulSoup(page.content, 'html5lib')
+        soup = BeautifulSoup(page.content, 'html.parser')
         content = soup.find('div', attrs={'class': 'w-blog-content'})
         if content is None:
             return dict()
 
-        print("Processing novel: " + str(novel_id))
+        print('Processing novel:', novel_id)
 
         data = {'id': novel_id}
         data.update(self.general_info(content))
@@ -73,16 +76,15 @@ class NovelScraper(object):
         Gets all novel ids from the novels listing page. The page contains multiple tabs with novels, first
         the maximum number of pages is obtained and then these are iterated through.
 
-        :param delay: Delay between web requests.
         :returns: A list with the novel ids of all currently listed novels.
-        """   
+        """
         if self.debug:
             novels_num_pages = 1
-            print("Debug run, running with: " + str(novels_num_pages))
+            print('Debug run, running with:',  novels_num_pages, 'pages.')
         else:
             page = self.scraper.get(self.NOVEL_LIST_URL + '1')
             novels_num_pages = self.get_novel_list_num_pages(page)
-            print("Full run, pages with novels: " + str(novels_num_pages))
+            print('Full run, pages with novels:', novels_num_pages, 'pages.')
 
         all_novel_ids = []
         for i in range(1, novels_num_pages + 1):
@@ -92,10 +94,11 @@ class NovelScraper(object):
             sleep(self.delay)
         return all_novel_ids
 
-    def get_novel_list_num_pages(self, page):
+    @staticmethod
+    def get_novel_list_num_pages(page):
         """
         Get the maximum number of pages with novels.
-        This number is not contant since the number of novels on the website are increasing.
+        This number is not constant since the number of novels on the website are increasing.
         Following the current website layout each page have 25 novels.
 
         :param page: The web address to the novel list, presumably the first page but can be any.
@@ -106,7 +109,8 @@ class NovelScraper(object):
         max_page = max([int(a.text) for a in dig_pag.find_all('a') if a.text.isdigit()])
         return max_page
 
-    def get_novel_ids(self, page):
+    @staticmethod
+    def get_novel_ids(page):
         """
         Gets all the novel ids from a page.
 
@@ -120,7 +124,8 @@ class NovelScraper(object):
         novel_ids = [int(n) for n in novel_ids]
         return novel_ids
 
-    def general_info(self, content):
+    @staticmethod
+    def general_info(content):
         """
         Scrapes all general information of a specific novel.
 
@@ -132,24 +137,19 @@ class NovelScraper(object):
         gen_info['name'] = get_value(content.find('div', attrs={'class', 'seriestitlenu'}))
         gen_info['assoc_names'] = get_value(content.find('div', attrs={'id': 'editassociated'}),
                                             check=lambda e: e, parse=lambda e: list(e.stripped_strings))
-        gen_info['original_langauge'] = get_value(content.find('div', attrs={'id': 'showlang'}),
+        gen_info['original_language'] = get_value(content.find('div', attrs={'id': 'showlang'}),
                                                   lambda e: e.a,
                                                   lambda e: e.text.strip().lower())
-        gen_info['authors'] = [author.text.lower()
-                               for author in content
-                                   .find('div', attrs={'id': 'showauthors'})
-                                   .find_all('a')]
-        gen_info['genres'] = [genre.text.lower()
-                              for genre in content
-                                  .find('div', attrs={'id': 'seriesgenre'})
-                                  .find_all('a', attrs={'class': 'genre'})]
-        gen_info['tags'] = [tag.text.lower()
-                            for tag in content
-                                .find('div', attrs={'id': 'showtags'})
-                                .find_all('a')]
+        gen_info['authors'] = [author.text.lower() for author in
+                               content.find('div', attrs={'id': 'showauthors'}).find_all('a')]
+        gen_info['genres'] = [genre.text.lower() for genre in
+                              content.find('div', attrs={'id': 'seriesgenre'}).find_all('a', attrs={'class': 'genre'})]
+        gen_info['tags'] = [tag.text.lower() for tag in
+                            content.find('div', attrs={'id': 'showtags'}).find_all('a')]
         return gen_info
 
-    def publisher_info(self, content):
+    @staticmethod
+    def publisher_info(content):
         """
         Scrapes all publisher information of a specific novel.
 
@@ -158,7 +158,7 @@ class NovelScraper(object):
         """
         pub_info = dict()
         pub_info['start_year'] = get_value(content.find('div', attrs={'id': 'edityear'}), )
-        pub_info['licensed'] = get_bool(get_value(content.find('div', attrs={'id': 'showlicensed'})))
+        pub_info['licensed'] = str2bool(get_value(content.find('div', attrs={'id': 'showlicensed'})))
         pub_info['original_publisher'] = get_value(content.find('div', attrs={'id': 'showopublisher'}),
                                                    lambda e: e.a,
                                                    lambda e: e.a.string.strip().lower())
@@ -167,7 +167,8 @@ class NovelScraper(object):
                                                   lambda e: e.a.string.strip().lower())
         return pub_info
 
-    def chapter_info(self, content):
+    @staticmethod
+    def chapter_info(content):
         """
         Scrapes all chapter information of a specific novel.
         Both latest released chapters and if the novel is complete.
@@ -180,22 +181,22 @@ class NovelScraper(object):
 
         if chapter_status is not None:
             chap_info['complete_original'] = 'complete' in chapter_status.lower()
-            chapter_current = re.search('(\d+)[ wnl]*(?=chap)', chapter_status.lower())
+            chapter_current = re.search(r'(\d+)[ wnl]*(?=chap)', chapter_status.lower())
             if chapter_current is not None:
                 chapter_current = chapter_current.group(1).strip() + " chapters"
             else:
                 # Check if volume
-                chapter_current = re.search('(\d+)[ wnl]*(?=volu)', chapter_status.lower())
+                chapter_current = re.search(r'(\d+)[ wnl]*(?=volu)', chapter_status.lower())
                 if chapter_current is not None:
                     chapter_current = chapter_current.group(1).strip() + " volumes"
                 else:
                     # Get the first number
-                    chapter_current = re.search('(\d+)', chapter_status.lower())
+                    chapter_current = re.search(r'(\d+)', chapter_status.lower())
                     if chapter_current is not None:
                         chapter_current = chapter_current.group(1).strip()
 
             chap_info['chapters_original_current'] = chapter_current if chapter_current != "" else None
-        chap_info['complete_translated'] = get_bool(get_value(content.find('div', attrs={'id': 'showtranslated'})))
+        chap_info['complete_translated'] = str2bool(get_value(content.find('div', attrs={'id': 'showtranslated'})))
 
         table = content.find('table', attrs={'id': 'myTable'})
         if table is not None:
@@ -203,7 +204,8 @@ class NovelScraper(object):
             chap_info['chapter_latest_translated'] = release_table.find('tr').find_all('td')[2].a.string.strip()
         return chap_info
 
-    def release_info(self, content):
+    @staticmethod
+    def release_info(content):
         """
         Scrapes all release and activity information of a specific novel.
 
@@ -215,14 +217,15 @@ class NovelScraper(object):
         activity = content.find_all('span', attrs={'class': 'userrate rank'})
 
         if not is_empty(release_freq):
-            rel_info['release_freq'] = float(re.search('\d+\.?\d*', release_freq).group(0))
+            rel_info['release_freq'] = float(re.search(r'\d+\.?\d*', release_freq).group(0))
 
         rel_info['activity_week_rank'] = int(activity[0].string[1:])
         rel_info['activity_month_rank'] = int(activity[1].string[1:])
         rel_info['activity_all_time_rank'] = int(activity[2].string[1:])
         return rel_info
 
-    def community_info(self, content):
+    @staticmethod
+    def community_info(content):
         """
         Scrapes all community information of a specific novels.
 
@@ -241,7 +244,8 @@ class NovelScraper(object):
         comm_info['rating_votes'] = int(rating_text[3])
         return comm_info
 
-    def relation_info(self, content):
+    @staticmethod
+    def relation_info(content):
         """
         Scrapes all relational information of a specific novel.
 
@@ -266,6 +270,32 @@ class NovelScraper(object):
             rel_info['recommendation_list_ids'] = [int(a['href'].split('/')[-2])
                                                    for a in rec_lists.findChildren('a')]
 
-        # Return None in the cases where nothing is found (and not []).
-        rel_info.update((k, None) for k, v in rel_info.items() if len(v) == 0)
+        # Return NaN in the cases where nothing is found (and not []).
+        rel_info.update((k, np.nan) for k, v in rel_info.items() if len(v) == 0)
         return rel_info
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--debug', type=str2bool, nargs='?', const=True, default=False)
+    parser.add_argument('--delay', type=float, default=0.5)
+    parser.add_argument('--novel_id', type=int, default=-1)
+    parser.add_argument('--version_number', type=str, default='0.1.2')
+    args = parser.parse_args()
+
+    novel_scraper = NovelScraper(args.delay, args.debug)
+
+    if args.novel_id == -1:
+        # Scrape all novels
+        novel_info = novel_scraper.parse_all_novels()
+    else:
+        novel_info = [novel_scraper.parse_single_novel(args.novel_id)]
+
+    df = pd.DataFrame(novel_info)
+    if not args.debug:
+        file_name = f'novels_{args.version_number}.csv'
+    else:
+        file_name = 'novels_debug.csv'
+
+    # Save to csv file
+    df.to_csv(file_name, header=True, index=False)
