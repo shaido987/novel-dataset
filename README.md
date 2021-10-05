@@ -1,4 +1,4 @@
-Creates a dataset from novelupdates (https://www.novelsupdates.com) containing information about translated novels.
+Creates a dataset from novelupdates (https://www.novelsupdates.com) containing information about translated novels.  
 The dataset contains translated English novels from eight different original languages. There is currently a total of 7650 novels in the dataset.
 
 Dataset columns:
@@ -36,5 +36,5 @@ Dataset columns:
   * Recommended Series IDs
   * Recommendation List IDs
   
-  Current Version: 0.1.2
+  Current Version: 0.1.2  
   Updated on 2020-10-03
