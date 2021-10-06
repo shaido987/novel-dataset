@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/1130029/136163928-552ee3e4-9d9d-4394-8a90-fbec1753dee4.jpg" />
+</p>
+
 Creates a dataset from novelupdates (https://www.novelsupdates.com) containing information about translated novels.  
 The dataset contains translated English novels from eight different original languages. There is currently a total of 7650 novels in the dataset.
 
