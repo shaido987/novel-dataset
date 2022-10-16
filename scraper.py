@@ -23,12 +23,12 @@ class NovelScraper:
                   Affects the speed of the program.
     """
 
-    def __init__(self, delay=0.5, debug=False):
+    def __init__(self, delay=1.0, debug=False):
         self.delay = delay
         self.debug = debug
         self.NOVEL_LIST_URL = "http://www.novelupdates.com/novelslisting/?st=1&pg="
         self.NOVEL_SINGLE_URL = "http://www.novelupdates.com/?p="
-        self.scraper = cfscrape.create_scraper()
+        self.scraper = cfscrape.create_scraper(delay=10)
 
     def parse_all_novels(self):
         """
@@ -279,7 +279,7 @@ if __name__ == "__main__":
     parser.add_argument('--debug', type=str2bool, nargs='?', const=True, default=False)
     parser.add_argument('--delay', type=float, default=0.5)
     parser.add_argument('--novel_id', type=int, default=-1)
-    parser.add_argument('--version_number', type=str, default='0.1.2')
+    parser.add_argument('--version_number', type=str, default='0.1.3')
     args = parser.parse_args()
 
     novel_scraper = NovelScraper(args.delay, args.debug)
@@ -291,10 +291,7 @@ if __name__ == "__main__":
         novel_info = [novel_scraper.parse_single_novel(args.novel_id)]
 
     df = pd.DataFrame(novel_info)
-    if not args.debug:
-        file_name = f'novels_{args.version_number}.csv'
-    else:
-        file_name = 'novels_debug.csv'
 
     # Save to csv file
+    file_name = 'novels_' + args.version_number + '.csv'
     df.to_csv(file_name, header=True, index=False)
