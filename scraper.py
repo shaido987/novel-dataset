@@ -56,7 +56,7 @@ class NovelScraper:
         soup = BeautifulSoup(page.content, 'html.parser')
         content = soup.find('div', attrs={'class': 'w-blog-content'})
         if content is None:
-            return dict()
+            return {'id': novel_id}
 
         data = {'id': novel_id}
         data.update(self.general_info(content))
