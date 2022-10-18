@@ -23,12 +23,12 @@ class NovelScraper:
                   Affects the speed of the program.
     """
 
-    def __init__(self, delay=0.5, debug=False):
+    def __init__(self, delay=1.0, debug=False):
         self.delay = delay
         self.debug = debug
         self.NOVEL_LIST_URL = "http://www.novelupdates.com/novelslisting/?st=1&pg="
         self.NOVEL_SINGLE_URL = "http://www.novelupdates.com/?p="
-        self.scraper = cfscrape.create_scraper()
+        self.scraper = cfscrape.create_scraper(delay=10)
 
     def parse_all_novels(self):
         """
@@ -56,7 +56,7 @@ class NovelScraper:
         soup = BeautifulSoup(page.content, 'html.parser')
         content = soup.find('div', attrs={'class': 'w-blog-content'})
         if content is None:
-            return dict()
+            return {'id': novel_id}
 
         data = {'id': novel_id}
         data.update(self.general_info(content))
@@ -258,7 +258,7 @@ class NovelScraper:
         rel_info['related_series_ids'] = []
         rel_info['recommended_series_ids'] = []
         rel_info['recommendation_list_ids'] = []
-        for series in wpb_wrapper.findChildren('a', attrs={'class': 'genre'}, recursive=False):
+        for series in wpb_wrapper.findChildren('a', attrs={'class': 'genre'}, recursive=True):
             if series.has_attr('title'):
                 rel_info['recommended_series_ids'].append(int(series.get('id')[3:]))
             else:
@@ -279,7 +279,7 @@ if __name__ == "__main__":
     parser.add_argument('--debug', type=str2bool, nargs='?', const=True, default=False)
     parser.add_argument('--delay', type=float, default=0.5)
     parser.add_argument('--novel_id', type=int, default=-1)
-    parser.add_argument('--version_number', type=str, default='0.1.2')
+    parser.add_argument('--version_number', type=str, default='0.1.3')
     args = parser.parse_args()
 
     novel_scraper = NovelScraper(args.delay, args.debug)
@@ -291,10 +291,7 @@ if __name__ == "__main__":
         novel_info = [novel_scraper.parse_single_novel(args.novel_id)]
 
     df = pd.DataFrame(novel_info)
-    if not args.debug:
-        file_name = f'novels_{args.version_number}.csv'
-    else:
-        file_name = 'novels_debug.csv'
 
     # Save to csv file
+    file_name = 'novels_' + args.version_number + '.csv'
     df.to_csv(file_name, header=True, index=False)

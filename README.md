@@ -1,8 +1,12 @@
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/1130029/136163928-552ee3e4-9d9d-4394-8a90-fbec1753dee4.jpg" />
-</p>
+![Graph illustration](./graph.png)
+---
 
-Dataset created from novelupdates (https://www.novelupdates.com) containing information about translated novels. The dataset contains translated English novels from eight different original languages. There is a total of **7650 novels** in the dataset. This repository also contains the code for scraping the dataset information from the website.
+Creates a dataset from novelupdates (https://www.novelupdates.com) containing information about translated novels.
+The dataset contains translated English novels from eight different original languages. There is currently a total of **13,592** novels.  
+
+Current Version: 0.1.3  
+Updated on 2022-10-18  
+
 
 Dataset columns:
 * General Information
@@ -38,6 +42,3 @@ Dataset columns:
   * Related Series IDs
   * Recommended Series IDs
   * Recommendation List IDs
-  
-  Current Version: 0.1.2  
-  Dataset updated on 2020-10-03
