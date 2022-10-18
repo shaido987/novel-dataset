@@ -1,4 +1,9 @@
-![Graph illustration](./graph.png)
+<p align="center">
+  <img
+    src="https://github.com/shaido987/novel-dataset/blob/master/graph.png"
+    alt="Graph illustation of the novels">
+</p>
+
 ---
 
 Creates a dataset from novelupdates (https://www.novelupdates.com) containing information about translated novels.
