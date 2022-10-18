@@ -3,13 +3,13 @@ import sys
 
 def get_value(element, check=lambda e: e.string, parse=lambda e: e.string.strip()):
     """
-    Gets the value of a HTML element/node following the parse function. 
+    Gets the value of an HTML element/node following the parse function. 
     This function is necessary since the novel pages are not always consistent with each other. 
     Also checks if the value is 'N/A' and returns None in that case.
     
     :param element: A HTML element/node.
     :param check: A function to be applied on the element. 
-                  Checks if the element object have a retrun value for the function or is it's None.
+                  Checks if the element object has a return value for the function or if it's None.
     :param parse: A function to parse the element if it passes the check.
     :returns: The value returned by running the parse function on the element.
               None is returned if the element does not pass the check function or if the value is 'N/A'.
@@ -25,16 +25,16 @@ def get_value(element, check=lambda e: e.string, parse=lambda e: e.string.strip(
 def get_value_str_txt(element, check_one=lambda e: e.string, parse_one=lambda e: e.string.strip(),
                       check_two=lambda e: e.text, parse_two=lambda e: e.text.strip()):
     """
-    Used when it's unknown which function to apply on an element to obtain it's value.
+    Used when it's unknown which function to apply on an element to obtain its value.
     For example, if .string or .text should be used.
     The functions are applied in order, if the first one returns None then the second one is tried.
     
     :param element: A HTML element/node.
     :param check_one: A function to be applied on the element.
-                      Checks if the element object have a retrun value for the function or is it's None.
+                      Checks if the element object has a return value for the function or if it's None.
     :param parse_one: A function to parse the element if it passes the check.
     :param check_two: A function to be applied on the element.
-                      Checks if the element object have a retrun value for the function or is it's None.
+                      Checks if the element object has a return value for the function or if it's None.
     :param parse_two: A function to parse the element if it passes the check.
     :returns: The value returned by running parse_one or parse_two on the element.
     """
@@ -73,7 +73,7 @@ def str2bool(argument):
 
 def progressbar(it, size=60, prefix="", suffix=""):
     """
-    Adds an progress bar when scraping.
+    Adds a progress bar when scraping.
     :param it: iterable, the list or iterable to run over.
     :param size: int, the total length of the bar.
     :param prefix: str, any prefix to use.
