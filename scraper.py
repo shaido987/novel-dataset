@@ -14,12 +14,12 @@ class NovelScraper:
     
     Constant web links:
     * NOVEL_LIST_URL: http://www.novelupdates.com/novelslisting/?st=1&pg=
-      The url of the series listings. A number is added to the end depending on the wanted tab.
+      The URL of the series listings. A number is added to the end depending on the wanted tab.
     * NOVEL_SINGLE_URL: http://www.novelupdates.com/?p=
-      The url of a single novel, a id number needs to be added to the end for the specific novel.
+      The URL of a single novel, an ID number needs to be added to the end for the specific novel.
     
     :param debug: Boolean, debug mode. If true, only one page with novels will be parsed (25).
-    :param delay: The delay between web requests, used both when obtaining novel ids and for each individual novel.
+    :param delay: The delay between web requests, used both when obtaining novel ids and for each novel.
                   Affects the speed of the program.
     """
 
@@ -71,8 +71,8 @@ class NovelScraper:
     def get_all_novel_ids(self):
         """
         There is no easy way to get all novel ids (they are not strictly consecutive).
-        Gets all novel ids from the novels listing page. The page contains multiple tabs with novels, first
-        the maximum number of pages is obtained and then these are iterated through.
+        Gets all novel ids from the novels listing page. The page contains multiple tabs with novels, 
+        the maximum number of pages is obtained first and then these are iterated through.
 
         :returns: A list with the novel ids of all currently listed novels.
         """
@@ -97,8 +97,8 @@ class NovelScraper:
     def get_novel_list_num_pages(page):
         """
         Get the maximum number of pages with novels.
-        This number is not constant since the number of novels on the website are increasing.
-        Following the current website layout each page have 25 novels.
+        This number is not constant since the number of novels on the website is increasing.
+        Following the current website layout, each page has 25 novels.
 
         :param page: The web address to the novel list, presumably the first page but can be any.
         :returns: An int representing the current number of pages of the novel lists.
@@ -111,7 +111,7 @@ class NovelScraper:
     @staticmethod
     def get_novel_ids(page):
         """
-        Gets all the novel ids from a page.
+        Gets all the novel IDs from a page.
 
         :param page: One of the pages with novels.
         :returns: A list with all novel ids for the novels on the page.
@@ -226,7 +226,7 @@ class NovelScraper:
     @staticmethod
     def community_info(content):
         """
-        Scrapes all community information of a specific novels.
+        Scrapes all community information of a specific novel.
 
         :param content: The content page of a novel.
         :returns: A dictionary with scraped and cleaned information.
