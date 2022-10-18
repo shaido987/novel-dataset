@@ -2,7 +2,7 @@
 ---
 
 Creates a dataset from novelupdates (https://www.novelupdates.com) containing information about translated novels.
-The dataset contains translated English novels from eight different original languages. There is currently a total of 13,592 novels.  
+The dataset contains translated English novels from eight different original languages. There is currently a total of **13,592** novels.  
 
 Current Version: 0.1.3  
 Updated on 2022-10-18  
