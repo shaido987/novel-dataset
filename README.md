@@ -1,4 +1,4 @@
-![Graph illustration](./graph.svg)
+![Graph illustration](./graph.png)
 ---
 
 Creates a dataset from novelupdates (https://www.novelupdates.com) containing information about translated novels.
