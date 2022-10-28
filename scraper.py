@@ -19,7 +19,7 @@ class NovelScraper:
       The URL of a single novel, an ID number needs to be added to the end for the specific novel.
     
     :param debug: Boolean, debug mode. If true, only one page with novels will be parsed (25).
-    :param delay: The delay between web requests, used both when obtaining novel ids and for each novel.
+    :param delay: The delay, in seconds, between web requests, used both when obtaining novel ids and for each novel.
                   Affects the speed of the program.
     """
 
