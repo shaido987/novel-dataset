@@ -1,7 +1,7 @@
 <p align="center">
   <img
     src="https://github.com/shaido987/novel-dataset/blob/master/graph.png"
-    alt="Graph illustation of the novels">
+    alt="Graph illustration of the novels">
 </p>
 
 ---
