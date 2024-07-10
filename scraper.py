@@ -1,5 +1,5 @@
 import re
-import cfscrape
+import cloudscraper
 import argparse
 import pandas as pd
 import numpy as np
@@ -7,14 +7,15 @@ from time import sleep
 from bs4 import BeautifulSoup
 from utils import get_value, str2bool, get_value_str_txt, is_empty, progressbar
 
-
 class NovelScraper:
     """
     Scrapes novel information from novelupdates, http://www.novelupdates.com/.
     
     Constant web links:
-    * NOVEL_LIST_URL: http://www.novelupdates.com/novelslisting/?st=1&pg=
-      The URL of the series listings. A number is added to the end depending on the wanted tab.
+    * NOVEL_LIST_URL: https://www.novelupdates.com/series-ranking/?rank=sixmonths&pg=
+      The URL of the series rankings. A number is added to the end depending on the wanted tab.
+      Series listings used to be used, but novelupdates changed their layout so that only 100 pages of ids are
+      available. Thus, rankings are the only way to get all novels now even though constant ordering is not guaranteed.
     * NOVEL_SINGLE_URL: http://www.novelupdates.com/?p=
       The URL of a single novel, an ID number needs to be added to the end for the specific novel.
     
@@ -26,9 +27,17 @@ class NovelScraper:
     def __init__(self, delay=1.0, debug=False):
         self.delay = delay
         self.debug = debug
-        self.NOVEL_LIST_URL = "http://www.novelupdates.com/novelslisting/?st=1&pg="
+        self.NOVEL_LIST_URL = "https://www.novelupdates.com/series-ranking/?rank=sixmonths&pg="
         self.NOVEL_SINGLE_URL = "http://www.novelupdates.com/?p="
-        self.scraper = cfscrape.create_scraper(delay=10)
+        self.scraper = cloudscraper.create_scraper(
+            interpreter="nodejs",
+            delay=10,
+            browser={
+                "browser": "chrome",
+                "platform": "ios",
+                "desktop": False,
+            },
+        )
 
     def parse_all_novels(self):
         """
@@ -36,12 +45,18 @@ class NovelScraper:
         :returns: A list of dictionaries with all scraped and cleaned information of the novels.
         """
         novel_ids = self.get_all_novel_ids()
+        print("Found {} unique novels to parse.".format(len(novel_ids)))
 
         all_novel_information = []
         for novel_id in progressbar(novel_ids, prefix="Parsing novels: ", suffix="current novel id: "):
-            info = self.parse_single_novel(novel_id)
-            all_novel_information.append(info)
-            sleep(self.delay)
+            try:
+                info = self.parse_single_novel(novel_id)
+                all_novel_information.append(info)
+                sleep(self.delay)
+            except Exception as e:
+                # give time just in case for novelupdates to recover
+                sleep(self.delay * 10)
+        print(f"Successfully parsed {len(all_novel_information)} novels.")
         return all_novel_information
 
     def parse_single_novel(self, novel_id):
@@ -80,16 +95,19 @@ class NovelScraper:
             novels_num_pages = 1
             print('Debug run, using 1 page with novels.')
         else:
+            print('Full run, obtaining number of pages with novels...')
             page = self.scraper.get(self.NOVEL_LIST_URL + '1')
             novels_num_pages = self.get_novel_list_num_pages(page)
             print('Full run, pages with novels:', novels_num_pages)
+            sleep(self.delay)
 
-        all_novel_ids = []
+        print('Estimated number of novels: {}'.format(novels_num_pages * 25))
+        all_novel_ids = set()
         page_nums = progressbar(range(1, novels_num_pages + 1), prefix="Obtaining novel ids: ", suffix="current page: ")
         for page_num in page_nums:
             page = self.scraper.get(self.NOVEL_LIST_URL + str(page_num))
             novel_ids = self.get_novel_ids(page)
-            all_novel_ids.extend(novel_ids)
+            all_novel_ids.update(novel_ids)
             sleep(self.delay)
         return all_novel_ids
 
@@ -120,7 +138,7 @@ class NovelScraper:
         table = soup.find('div', attrs={'class': 'w-blog-content other'})
         novels = table.find_all('div', attrs={'class': 'search_title'})
         novel_ids = [novel.find('span', attrs={'class': 'rl_icons_en'}).get('id')[3:] for novel in novels]
-        novel_ids = [int(n) for n in novel_ids]
+        novel_ids = {int(n) for n in novel_ids}
         return novel_ids
 
     @staticmethod
@@ -200,7 +218,7 @@ class NovelScraper:
         table = content.find('table', attrs={'id': 'myTable'})
         if table is not None:
             release_table = table.find('tbody')
-            chap_info['chapter_latest_translated'] = release_table.find('tr').find_all('td')[2].a.string.strip()
+            chap_info['chapter_latest_translated'] = release_table.find('tr').find_all('td')[2].span.string.strip()
         return chap_info
 
     @staticmethod
@@ -279,7 +297,7 @@ if __name__ == "__main__":
     parser.add_argument('--debug', type=str2bool, nargs='?', const=True, default=False)
     parser.add_argument('--delay', type=float, default=0.5)
     parser.add_argument('--novel_id', type=int, default=-1)
-    parser.add_argument('--version_number', type=str, default='0.1.3')
+    parser.add_argument('--version_number', type=str, default='0.1.4')
     args = parser.parse_args()
 
     novel_scraper = NovelScraper(args.delay, args.debug)
