@@ -7,10 +7,10 @@
 ---
 
 Creates a dataset from novelupdates (https://www.novelupdates.com) containing information about translated novels.
-The dataset contains translated English novels from eight different original languages (chinese, japanese, korean, malaysian, filipino, indonesian, khmer, thai). There is currently a total of **13,592** novels.  
+The dataset contains translated English novels from eight different original languages (chinese, japanese, korean, malaysian, filipino, indonesian, khmer, thai). There is currently a total of **21,831** novels.  
 
-Current Version: 0.1.3  
-Updated on 2022-10-18  
+Current Version: 0.1.4
+Updated on 2024-07-10
 
 
 Dataset columns:
