@@ -1,6 +1,6 @@
 beautifulsoup4==4.11.1
 bs4==0.0.1
-certifi==2022.9.24
+certifi==2024.7.4
 charset-normalizer==2.1.1
 cloudscraper==1.2.71
 idna==3.4
