@@ -19,6 +19,7 @@ Dataset columns:
 * General Information
   * Novel ID
   * Name
+  * Cover Image URL
   * Associated Names
   * Original Langauge	
   * Author / Authors
