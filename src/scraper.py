@@ -1,6 +1,7 @@
 import re
 import cloudscraper
 import argparse
+import json
 import pandas as pd
 import numpy as np
 from time import sleep
@@ -55,6 +56,7 @@ class NovelScraper:
                 sleep(self.delay)
             except Exception as e:
                 # give time just in case for novelupdates to recover
+                print(f"Error parsing novel {novel_id}: {e}") # Log errors
                 sleep(self.delay * 10)
         print(f"Successfully parsed {len(all_novel_information)} novels.")
         return all_novel_information
@@ -300,7 +302,9 @@ if __name__ == "__main__":
     parser.add_argument('--debug', type=str2bool, nargs='?', const=True, default=False)
     parser.add_argument('--delay', type=float, default=0.5)
     parser.add_argument('--novel_id', type=int, default=-1)
-    parser.add_argument('--version_number', type=str, default='0.1.4')
+    parser.add_argument('--version_number', type=str, default='0.1.5')
+    parser.add_argument('--format', type=str, choices=['csv', 'json', 'both'], default='csv',
+                        help="Export format: csv, json, or both")
     args = parser.parse_args()
 
     novel_scraper = NovelScraper(args.delay, args.debug)
@@ -311,8 +315,15 @@ if __name__ == "__main__":
     else:
         novel_info = [novel_scraper.parse_single_novel(args.novel_id)]
 
-    df = pd.DataFrame(novel_info)
+    # Export logic
+    if args.format in ('json', 'both'):
+        file_name = 'novels_' + args.version_number + '.json'
+        with open(file_name, 'w', encoding='utf-8') as f:
+            json.dump(novel_info, f, ensure_ascii=False, indent=2)
+        print(f"Saved {len(novel_info)} novels to {file_name} (JSON)")
 
-    # Save to csv file
-    file_name = 'novels_' + args.version_number + '.csv'
-    df.to_csv(file_name, header=True, index=False)
+    if args.format in ('csv', 'both'):
+        df = pd.DataFrame(novel_info)
+        file_name = 'novels_' + args.version_number + '.csv'
+        df.to_csv(file_name, header=True, index=False)
+        print(f"Saved {len(novel_info)} novels to {file_name} (CSV)")
