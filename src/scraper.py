@@ -174,6 +174,9 @@ class NovelScraper:
 
         gen_info = dict()
         gen_info['name'] = get_value(content.find('div', attrs={'class', 'seriestitlenu'}))
+        gen_info['novel_type'] = get_value(content.find('a', class_='genre type'),
+                                           check=lambda e: e.string or e.text,
+                                           parse=lambda e: (e.string or e.text).strip())
         gen_info['cover_url'] = get_value(content.find('div', class_='seriesimg'),
                                           check=lambda e: e.img and e.img.get('src'),
                                           parse=lambda e: e.img['src'])
