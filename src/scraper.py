@@ -4,9 +4,29 @@ import argparse
 import json
 import pandas as pd
 import numpy as np
+import math
 from time import sleep
 from bs4 import BeautifulSoup
 from utils import get_value, str2bool, get_value_str_txt, is_empty, progressbar
+
+def clean_for_json(obj):
+    """
+    Recursively clean data structure to ensure JSON compatibility by replacing NaN values with None.
+    
+    :param obj: The object to clean (can be dict, list, or primitive value)
+    :returns: A JSON-safe version of the object
+    """
+    if isinstance(obj, dict):
+        return {k: clean_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_for_json(item) for item in obj]
+    elif isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+        return None
+    elif obj is np.nan:
+        return None
+    else:
+        return obj
+
 
 class NovelScraper:
     """
@@ -292,8 +312,8 @@ class NovelScraper:
             rel_info['recommendation_list_ids'] = [int(a['href'].split('/')[-2])
                                                    for a in rec_lists.findChildren('a')]
 
-        # Return NaN in the cases where nothing is found (and not []).
-        rel_info.update((k, np.nan) for k, v in rel_info.items() if len(v) == 0)
+        # Return None in the cases where nothing is found (and not []).
+        rel_info.update((k, None) for k, v in rel_info.items() if len(v) == 0)
         return rel_info
 
 
@@ -318,8 +338,10 @@ if __name__ == "__main__":
     # Export logic
     if args.format in ('json', 'both'):
         file_name = 'novels_' + args.version_number + '.json'
+        # Clean data to ensure JSON compatibility
+        clean_novel_info = clean_for_json(novel_info)
         with open(file_name, 'w', encoding='utf-8') as f:
-            json.dump(novel_info, f, ensure_ascii=False, indent=2)
+            json.dump(clean_novel_info, f, ensure_ascii=False, indent=2)
         print(f"Saved {len(novel_info)} novels to {file_name} (JSON)")
 
     if args.format in ('csv', 'both'):
