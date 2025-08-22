@@ -174,9 +174,16 @@ class NovelScraper:
 
         gen_info = dict()
         gen_info['name'] = get_value(content.find('div', attrs={'class', 'seriestitlenu'}))
-        gen_info['novel_type'] = get_value(content.find('a', class_='genre type'),
-                                           check=lambda e: e.string or e.text,
-                                           parse=lambda e: (e.string or e.text).strip())
+        try:
+            novel_type_element = content.find('a', class_='genre type')
+            if novel_type_element is not None:
+                gen_info['novel_type'] = get_value(novel_type_element,
+                                                   check=lambda e: e.string or e.text,
+                                                   parse=lambda e: (e.string or e.text).strip())
+            else:
+                gen_info['novel_type'] = "N/A"
+        except:
+            gen_info['novel_type'] = "N/A"
         gen_info['cover_url'] = get_value(content.find('div', class_='seriesimg'),
                                           check=lambda e: e.img and e.img.get('src'),
                                           parse=lambda e: e.img['src'])
