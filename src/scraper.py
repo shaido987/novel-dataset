@@ -1,11 +1,32 @@
 import re
 import cloudscraper
 import argparse
+import json
 import pandas as pd
 import numpy as np
+import math
 from time import sleep
 from bs4 import BeautifulSoup
 from utils import get_value, str2bool, get_value_str_txt, is_empty, progressbar
+
+def clean_for_json(obj):
+    """
+    Recursively clean data structure to ensure JSON compatibility by replacing NaN values with None.
+    
+    :param obj: The object to clean (can be dict, list, or primitive value)
+    :returns: A JSON-safe version of the object
+    """
+    if isinstance(obj, dict):
+        return {k: clean_for_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_for_json(item) for item in obj]
+    elif isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+        return None
+    elif obj is np.nan:
+        return None
+    else:
+        return obj
+
 
 class NovelScraper:
     """
@@ -55,6 +76,7 @@ class NovelScraper:
                 sleep(self.delay)
             except Exception as e:
                 # give time just in case for novelupdates to recover
+                print(f"Error parsing novel {novel_id}: {e}") # Log errors
                 sleep(self.delay * 10)
         print(f"Successfully parsed {len(all_novel_information)} novels.")
         return all_novel_information
@@ -152,6 +174,19 @@ class NovelScraper:
 
         gen_info = dict()
         gen_info['name'] = get_value(content.find('div', attrs={'class', 'seriestitlenu'}))
+        try:
+            novel_type_element = content.find('a', class_='genre type')
+            if novel_type_element is not None:
+                gen_info['novel_type'] = get_value(novel_type_element,
+                                                   check=lambda e: e.string or e.text,
+                                                   parse=lambda e: (e.string or e.text).strip())
+            else:
+                gen_info['novel_type'] = "N/A"
+        except:
+            gen_info['novel_type'] = "N/A"
+        gen_info['cover_url'] = get_value(content.find('div', class_='seriesimg'),
+                                          check=lambda e: e.img and e.img.get('src'),
+                                          parse=lambda e: e.img['src'])
         gen_info['assoc_names'] = get_value(content.find('div', attrs={'id': 'editassociated'}),
                                             check=lambda e: e, parse=lambda e: list(e.stripped_strings))
         gen_info['original_language'] = get_value(content.find('div', attrs={'id': 'showlang'}),
@@ -287,8 +322,8 @@ class NovelScraper:
             rel_info['recommendation_list_ids'] = [int(a['href'].split('/')[-2])
                                                    for a in rec_lists.findChildren('a')]
 
-        # Return NaN in the cases where nothing is found (and not []).
-        rel_info.update((k, np.nan) for k, v in rel_info.items() if len(v) == 0)
+        # Return None in the cases where nothing is found (and not []).
+        rel_info.update((k, None) for k, v in rel_info.items() if len(v) == 0)
         return rel_info
 
 
@@ -297,7 +332,9 @@ if __name__ == "__main__":
     parser.add_argument('--debug', type=str2bool, nargs='?', const=True, default=False)
     parser.add_argument('--delay', type=float, default=0.5)
     parser.add_argument('--novel_id', type=int, default=-1)
-    parser.add_argument('--version_number', type=str, default='0.1.4')
+    parser.add_argument('--version_number', type=str, default='0.1.5')
+    parser.add_argument('--format', type=str, choices=['csv', 'json', 'both'], default='csv',
+                        help="Export format: csv, json, or both")
     args = parser.parse_args()
 
     novel_scraper = NovelScraper(args.delay, args.debug)
@@ -308,8 +345,17 @@ if __name__ == "__main__":
     else:
         novel_info = [novel_scraper.parse_single_novel(args.novel_id)]
 
-    df = pd.DataFrame(novel_info)
+    # Export logic
+    if args.format in ('json', 'both'):
+        file_name = 'novels_' + args.version_number + '.json'
+        # Clean data to ensure JSON compatibility
+        clean_novel_info = clean_for_json(novel_info)
+        with open(file_name, 'w', encoding='utf-8') as f:
+            json.dump(clean_novel_info, f, ensure_ascii=False, indent=2)
+        print(f"Saved {len(novel_info)} novels to {file_name} (JSON)")
 
-    # Save to csv file
-    file_name = 'novels_' + args.version_number + '.csv'
-    df.to_csv(file_name, header=True, index=False)
+    if args.format in ('csv', 'both'):
+        df = pd.DataFrame(novel_info)
+        file_name = 'novels_' + args.version_number + '.csv'
+        df.to_csv(file_name, header=True, index=False)
+        print(f"Saved {len(novel_info)} novels to {file_name} (CSV)")
